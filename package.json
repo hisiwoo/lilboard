@@ -1,0 +1,41 @@
+{
+  "name": "lilboard",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "prisma generate && next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "next lint",
+    "postinstall": "prisma generate",
+    "db:push": "prisma db push",
+    "burn": "tsx scripts/burn.ts",
+    "dev:mint": "tsx scripts/create-dev-mint.ts"
+  },
+  "dependencies": {
+    "@libsql/client": "^0.15.9",
+    "@prisma/adapter-libsql": "^6.9.0",
+    "@prisma/client": "^6.9.0",
+    "@solana/spl-token": "^0.4.9",
+    "@solana/wallet-adapter-base": "^0.9.23",
+    "@solana/wallet-adapter-react": "^0.15.35",
+    "@solana/wallet-adapter-react-ui": "^0.9.35",
+    "@solana/web3.js": "^1.95.4",
+    "bs58": "^6.0.0",
+    "next": "^16.2.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "tweetnacl": "^1.0.3",
+    "zod": "^3.25.56"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.0",
+    "@types/node": "^22.15.30",
+    "@types/react": "^19.1.6",
+    "@types/react-dom": "^19.1.6",
+    "prisma": "^6.9.0",
+    "tailwindcss": "^4.1.0",
+    "tsx": "^4.19.4",
+    "typescript": "^5.8.3"
+  }
+}

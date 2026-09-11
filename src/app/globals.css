@@ -1,0 +1,39 @@
+@import "tailwindcss";
+
+:root {
+  --bg: #0b0b0f;
+  --panel: rgba(18, 18, 24, 0.92);
+  --line: rgba(255, 255, 255, 0.08);
+  --text: #f4f4f5;
+  --muted: #8b8b95;
+  --accent: #c8ff00;
+}
+
+html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); font-family: "Inter", ui-sans-serif, system-ui, -apple-system, sans-serif; overscroll-behavior: none; }
+* { box-sizing: border-box; }
+button { font: inherit; cursor: pointer; }
+
+.panel { background: var(--panel); border: 1px solid var(--line); backdrop-filter: blur(14px); border-radius: 16px; }
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; border-radius: 999px; padding: 12px 20px; font-weight: 700; border: 1px solid var(--line); background: rgba(255,255,255,0.06); color: var(--text); transition: transform .08s, background .15s; user-select: none; }
+.btn:hover { background: rgba(255,255,255,0.1); }
+.btn:active { transform: scale(0.97); }
+.btn:disabled { opacity: .4; cursor: not-allowed; transform: none; }
+.btn-primary { background: var(--accent); color: #0b0b0f; border-color: transparent; }
+.btn-primary:hover { background: #d9ff3d; }
+
+.swatch { width: 34px; height: 34px; border-radius: 10px; border: 2px solid transparent; transition: transform .08s; }
+.swatch:hover { transform: scale(1.1); }
+.swatch.active { border-color: #fff; transform: scale(1.15); box-shadow: 0 0 0 2px #0b0b0f, 0 0 0 4px #fff; }
+
+.wallet-adapter-modal-wrapper { background: #14141a !important; border: 1px solid var(--line); border-radius: 20px !important; font-family: inherit !important; }
+.wallet-adapter-modal-title { font-weight: 800 !important; }
+.wallet-adapter-modal-list .wallet-adapter-button { font-family: inherit !important; font-weight: 700 !important; border-radius: 12px !important; }
+.wallet-adapter-modal-list .wallet-adapter-button:hover { background: rgba(255,255,255,0.08) !important; }
+.wallet-adapter-modal-overlay { background: rgba(0,0,0,.6) !important; }
+
+@keyframes pop { 0% { transform: scale(.6); opacity: 0 } 60% { transform: scale(1.08); opacity: 1 } 100% { transform: scale(1) } }
+.pop { animation: pop .25s ease-out; }
+@keyframes slide-in { from { transform: translateY(8px); opacity: 0 } to { transform: none; opacity: 1 } }
+.slide-in { animation: slide-in .2s ease-out; }
+@keyframes pulse-ring { 0% { box-shadow: 0 0 0 0 rgba(200,255,0,.6) } 100% { box-shadow: 0 0 0 14px rgba(200,255,0,0) } }
+.pulse { animation: pulse-ring 1.2s ease-out infinite; }

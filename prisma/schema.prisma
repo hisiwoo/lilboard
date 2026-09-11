@@ -1,0 +1,108 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  wallet          String    @id
+  pixelsPainted   Int       @default(0)
+  pixelsStolen    Int       @default(0)
+  pixelsLost      Int       @default(0)
+  spent           Int       @default(0)   // whole tokens
+  earned          Int       @default(0)   // whole tokens (steal payback + jackpots)
+  claimable       Int       @default(0)   // whole tokens not yet paid out
+  streak          Int       @default(0)
+  lastPaintDay    String?
+  freeAvailableAt DateTime  @default(now())
+  createdAt       DateTime  @default(now())
+  pixels          Pixel[]
+  orders          Order[]
+  payouts         Payout[]
+}
+
+model Pixel {
+  x           Int
+  y           Int
+  color       Int
+  ownerWallet String?
+  owner       User?    @relation(fields: [ownerWallet], references: [wallet])
+  paidPrice   Int      @default(0) // what the current owner paid (0 = free pixel)
+  overwrites  Int      @default(0)
+  updatedAt   DateTime @default(now())
+
+  @@id([x, y])
+  @@index([ownerWallet])
+}
+
+model Order {
+  id        String   @id
+  wallet    String
+  user      User     @relation(fields: [wallet], references: [wallet])
+  items     String   // JSON PricedItem[]
+  total     Int      // whole tokens
+  status    String   @default("PENDING") // PENDING | PAID
+  signature String?  @unique
+  createdAt DateTime @default(now())
+  paidAt    DateTime?
+
+  @@index([wallet, status])
+}
+
+/// Every token movement inside the game, for transparency.
+model Ledger {
+  id        Int      @id @default(autoincrement())
+  type      String   // PAYBACK | BURN | JACKPOT | OPS | REFUND | JACKPOT_WIN
+  wallet    String?
+  amount    Int
+  orderId   String?
+  roundId   Int?
+  createdAt DateTime @default(now())
+
+  @@index([type])
+  @@index([wallet])
+}
+
+model Round {
+  id           Int       @id @default(autoincrement())
+  startsAt     DateTime
+  endsAt       DateTime
+  pot          Int       @default(0)
+  winnerWallet String?
+  winnerPixels Int?
+  settledAt    DateTime?
+}
+
+model Payout {
+  id        String   @id
+  wallet    String
+  user      User     @relation(fields: [wallet], references: [wallet])
+  amount    Int
+  status    String   @default("PENDING") // PENDING | SENT | FAILED | SIMULATED
+  signature String?
+  createdAt DateTime @default(now())
+}
+
+model Event {
+  id           Int      @id @default(autoincrement())
+  type         String   // PAINT | STEAL | JACKPOT | CLAIM
+  wallet       String
+  victimWallet String?
+  count        Int      @default(1)
+  amount       Int      @default(0)
+  x            Int?
+  y            Int?
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+}
+
+model Stats {
+  id      Int @id @default(1)
+  burned  Int @default(0)   // whole tokens burned (or pending burn)
+  burnPending Int @default(0)
+  ops     Int @default(0)
+}
