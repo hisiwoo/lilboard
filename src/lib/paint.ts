@@ -1,7 +1,7 @@
 import { prisma } from "./prisma";
-import { applyUpdates, broadcast, ensureHydrated, type FeedEvent } from "./canvas";
+import { applyUpdates, ensureHydrated } from "./canvas";
 import { CANVAS_H, CANVAS_W, MAX_PIXELS_PER_ORDER, PALETTE, SPLIT, pixelPrice } from "./config";
-import { currentRound, roundInfo } from "./round";
+import { currentRound } from "./round";
 
 export type PaintItem = { x: number; y: number; color: number };
 export type PricedItem = PaintItem & { price: number; overwrites: number; ownerWallet: string | null; ownerPaid: number };
@@ -116,10 +116,8 @@ export async function commitPaint(wallet: string, quoted: PricedItem[], opts: { 
   applyUpdates(updates);
   const [topVictim] = Object.entries(victims).sort((a, b) => b[1].count - a[1].count);
   const sample = updates[0] ?? quoted[0];
-  const ev = await prisma.event.create({
+  await prisma.event.create({
     data: { type: stolen ? "STEAL" : "PAINT", wallet, victimWallet: topVictim?.[0] ?? null, count: painted, amount: paidBack, x: sample.x, y: sample.y },
   });
-  const feed: FeedEvent = { ...ev, createdAt: ev.createdAt.toISOString() };
-  broadcast({ pixels: updates, event: feed, round: await roundInfo() });
   return { painted, streak, stolen, refund, paidBack, free: !!opts.free };
 }

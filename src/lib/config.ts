@@ -13,9 +13,9 @@ export const PALETTE: string[] = [
 export const BLANK = 255;
 
 export const TOKEN = {
-  mint: process.env.NEXT_PUBLIC_PIXEL_TOKEN_MINT || "",
-  symbol: process.env.NEXT_PUBLIC_PIXEL_TOKEN_SYMBOL || "LIL",
-  decimals: Number(process.env.NEXT_PUBLIC_PIXEL_TOKEN_DECIMALS || 6),
+  mint: process.env.NEXT_PUBLIC_PIXEL_MINT || "",
+  symbol: process.env.NEXT_PUBLIC_PIXEL_SYMBOL || "LIL",
+  decimals: Number(process.env.NEXT_PUBLIC_PIXEL_DECIMALS || 6),
   treasury: process.env.NEXT_PUBLIC_TREASURY_WALLET || "",
   rpc: process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com",
   cluster: process.env.NEXT_PUBLIC_SOLANA_CLUSTER || "devnet",

@@ -72,13 +72,22 @@ export function Game() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [me?.wallet, mine]);
 
-  // Live updates.
+  // Live updates: poll /api/updates (serverless-friendly, no websockets).
   useEffect(() => {
     if (!meta || !colors || !mine) return;
-    const es = new EventSource("/api/stream");
-    es.onmessage = (ev) => {
-      const msg = JSON.parse(ev.data);
-      if (msg.pixels) {
+    let since = new Date().toISOString();
+    let stopped = false;
+    const tick = async () => {
+      if (stopped) return;
+      try {
+        const msg = await fetch(`/api/updates?since=${encodeURIComponent(since)}`, { cache: "no-store" }).then((r) => r.json());
+        since = msg.now;
+        handle(msg);
+      } catch {}
+      if (!stopped) setTimeout(tick, document.hidden ? 8000 : 2000);
+    };
+    const handle = (msg: { pixels: { x: number; y: number; color: number; owner: string | null }[]; events: FeedEvent[]; round: RoundInfo }) => {
+      if (msg.pixels.length) {
         let lost = 0;
         for (const p of msg.pixels) {
           const i = p.y * meta.w + p.x;
@@ -91,15 +100,19 @@ export function Game() {
         if (lost > 0) refresh();
       }
       if (msg.round) setRound(msg.round);
-      if (msg.event) {
-        setEvents((es) => [msg.event, ...es].slice(0, 30));
-        if (me && msg.event.victimWallet === me.wallet && msg.event.type === "STEAL") {
-          say(msg.event.amount > 0 ? `⚔️ ${msg.event.count} of your pixels were taken · +${fmt(msg.event.amount)} ${meta.token.symbol} for you` : `⚔️ ${msg.event.count} of your pixels were taken!`, "err");
+      if (msg.events.length) {
+        setEvents((es) => { const ids = new Set(es.map((e) => e.id)); return [...msg.events.filter((e) => !ids.has(e.id)), ...es].slice(0, 30); });
+        for (const ev of msg.events) {
+          if (me && ev.wallet === me.wallet) continue; // my own actions already toasted
+          if (me && ev.victimWallet === me.wallet && ev.type === "STEAL") {
+            say(ev.amount > 0 ? `⚔️ ${ev.count} of your pixels were taken · +${fmt(ev.amount)} ${meta.token.symbol} for you` : `⚔️ ${ev.count} of your pixels were taken!`, "err");
+          }
         }
-        if (me && msg.event.type === "JACKPOT" && msg.event.wallet === me.wallet) { say(`🏆 YOU WON THE JACKPOT · ${fmt(msg.event.amount)} ${meta.token.symbol}`); refresh(); }
+        for (const ev of msg.events) if (me && ev.type === "JACKPOT" && ev.wallet === me.wallet) { say(`🏆 YOU WON THE JACKPOT · ${fmt(ev.amount)} ${meta.token.symbol}`); refresh(); }
       }
     };
-    return () => es.close();
+    const t = setTimeout(tick, 2000);
+    return () => { stopped = true; clearTimeout(t); };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [meta, colors, mine, me?.wallet]);
 

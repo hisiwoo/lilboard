@@ -1,6 +1,6 @@
 import { prisma } from "./prisma";
 import { ROUND_HOURS } from "./config";
-import { broadcast, ensureHydrated, topOwners, type RoundInfo } from "./canvas";
+import { ensureHydrated, topOwners, type RoundInfo } from "./canvas";
 
 let lock: Promise<unknown> | null = null;
 
@@ -35,8 +35,7 @@ async function settle(id: number) {
     if (leader && r.pot > 0) {
       await tx.user.update({ where: { wallet: leader.wallet }, data: { claimable: { increment: r.pot }, earned: { increment: r.pot } } });
       await tx.ledger.create({ data: { type: "JACKPOT_WIN", wallet: leader.wallet, amount: r.pot, roundId: id } });
-      const ev = await tx.event.create({ data: { type: "JACKPOT", wallet: leader.wallet, amount: r.pot, count: leader.pixels } });
-      broadcast({ event: { ...ev, createdAt: ev.createdAt.toISOString() } });
+      await tx.event.create({ data: { type: "JACKPOT", wallet: leader.wallet, amount: r.pot, count: leader.pixels } });
     }
   });
 }

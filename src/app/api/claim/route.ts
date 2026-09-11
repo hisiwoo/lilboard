@@ -4,7 +4,6 @@ import { requireWallet } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { FREE_MODE } from "@/lib/config";
 import { sendTokens } from "@/lib/solana/payout";
-import { broadcast } from "@/lib/canvas";
 import { handle, json } from "@/lib/api";
 
 /** Pay out the caller's claimable balance from the treasury hot wallet. */
@@ -31,8 +30,7 @@ export async function POST() {
         throw new Error(`payout failed: ${(e as Error).message}`);
       }
     }
-    const ev = await prisma.event.create({ data: { type: "CLAIM", wallet, amount } });
-    broadcast({ event: { ...ev, createdAt: ev.createdAt.toISOString() } });
+    await prisma.event.create({ data: { type: "CLAIM", wallet, amount } });
     return json({ ok: true, amount, simulated: FREE_MODE });
   });
 }

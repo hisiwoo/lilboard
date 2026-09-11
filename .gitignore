@@ -6,3 +6,5 @@ prisma/*.db
 prisma/*.db-journal
 dev-wallet.json
 .env
+.vercel
+.env*

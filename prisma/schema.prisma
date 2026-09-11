@@ -36,6 +36,7 @@ model Pixel {
 
   @@id([x, y])
   @@index([ownerWallet])
+  @@index([updatedAt])
 }
 
 model Order {

@@ -9,7 +9,6 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
-    "burn": "tsx scripts/burn.ts",
     "dev:mint": "tsx scripts/create-dev-mint.ts"
   },
   "dependencies": {
