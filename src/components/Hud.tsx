@@ -94,12 +94,14 @@ export function BottomBar({ meta, me, activeColor, onColor, pendingCount, quote,
   return (
     <div className="pointer-events-none absolute inset-x-0 bottom-0 z-20 flex flex-col items-center gap-2 p-3">
       {hint && <div className="pointer-events-auto panel slide-in px-4 py-2 text-sm font-semibold">{hint}</div>}
-      <div className="pointer-events-auto panel flex max-w-full flex-wrap items-center justify-center gap-1.5 px-3 py-2">
+      {/* One dock so every control sits on a dark surface — readable over a white, zoomed-in canvas. */}
+      <div className="pointer-events-auto panel flex max-w-full flex-col items-center gap-2.5 px-3 pb-2.5 pt-2.5">
+      <div className="flex max-w-full flex-wrap items-center justify-center gap-1.5">
         {meta.palette.map((hex, i) => (
           <button key={hex} className={`swatch ${i === activeColor ? "active" : ""}`} style={{ background: hex }} onClick={() => onColor(i)} aria-label={`color ${i}`} />
         ))}
       </div>
-      <div className="pointer-events-auto flex items-center gap-2">
+      <div className="flex items-center gap-2">
         {pendingCount > 0 && <button className="btn" onClick={onClear} disabled={busy}>✕</button>}
         {me && (
           <button className={`btn ${freeReady && pendingCount === 1 ? "btn-primary pulse" : ""}`} onClick={onFree} disabled={!freeReady || pendingCount !== 1 || busy}
@@ -117,9 +119,10 @@ export function BottomBar({ meta, me, activeColor, onColor, pendingCount, quote,
           </button>
         )}
       </div>
-      <div className="pointer-events-auto text-[11px] font-semibold text-white/50">
+      <div className="px-1 text-center text-[11px] font-semibold text-white/60">
         {quote && quote.steals > 0 ? <span className="text-white/80">⚔️ {quote.steals} of these are someone&apos;s land — stealing costs 2× and pays them back</span>
           : <>1 px = {fmt(meta.basePrice)} {sym} · steal = 2× (max ×{meta.maxMult}) · free px every {fmtCooldown(meta.freeCooldown)}</>}
+      </div>
       </div>
     </div>
   );
