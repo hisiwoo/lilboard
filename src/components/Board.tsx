@@ -9,11 +9,12 @@ type Props = {
   pending: Pending[]; activeColor: number; showMine: boolean;
   onTap: (x: number, y: number) => void;
   onHover: (x: number, y: number) => void;
+  onHoverEnd: () => void;
 };
 
 const BLANK = 255;
 
-export function Board({ w, h, palette, colors, mine, version, pending, activeColor, showMine, onTap, onHover }: Props) {
+export function Board({ w, h, palette, colors, mine, version, pending, activeColor, showMine, onTap, onHover, onHoverEnd }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const offRef = useRef<HTMLCanvasElement | null>(null);
   const terrRef = useRef<HTMLCanvasElement | null>(null);
@@ -148,7 +149,7 @@ export function Board({ w, h, palette, colors, mine, version, pending, activeCol
     const c = toCell(e.clientX, e.clientY);
     if (c?.x !== hoverCell.current?.x || c?.y !== hoverCell.current?.y) {
       hoverCell.current = c;
-      if (c) onHover(c.x, c.y);
+      if (c) onHover(c.x, c.y); else onHoverEnd();
       draw();
     }
   };
@@ -184,7 +185,7 @@ export function Board({ w, h, palette, colors, mine, version, pending, activeCol
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
-      onPointerLeave={() => { hoverCell.current = null; draw(); }}
+      onPointerLeave={() => { hoverCell.current = null; onHoverEnd(); draw(); }}
       onTouchMove={onTouchMove}
       onTouchEnd={() => { pinch.current = null; }}
     />

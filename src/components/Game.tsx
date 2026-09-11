@@ -138,6 +138,8 @@ export function Game() {
     });
   }, [me, wallet, activeColor, meta, say, setVisible, signIn]);
 
+  // Cursor left the canvas (or the grid): drop the pixel tooltip and any pending lookup.
+  const onHoverEnd = useCallback(() => { clearTimeout(hoverTimer.current); setInfo(null); }, []);
   const onHover = useCallback((x: number, y: number) => {
     clearTimeout(hoverTimer.current);
     hoverTimer.current = setTimeout(async () => {
@@ -206,7 +208,7 @@ export function Game() {
   return (
     <div className="relative h-dvh w-full overflow-hidden">
       <Board w={meta.w} h={meta.h} palette={meta.palette} colors={colors} mine={mine} version={version} pending={pending}
-        activeColor={activeColor} showMine={showMine} onTap={onTap} onHover={onHover} />
+        activeColor={activeColor} showMine={showMine} onTap={onTap} onHover={onHover} onHoverEnd={onHoverEnd} />
       <TopBar meta={meta} round={round} me={me} wallet={wallet} signing={signing} onSignIn={signIn} onSignOut={signOut}
         showMine={showMine} onToggleMine={() => setShowMine((s) => !s)} onOpenBoard={() => setBoard(true)} onOpenRules={() => setRules(true)} onClaim={claim} claiming={claiming} balance={balance} />
       <PixelInfo info={info} me={me} symbol={meta.token.symbol} />
