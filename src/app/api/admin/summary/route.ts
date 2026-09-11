@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/admin";
 import { ensureHydrated, claimedCount, topOwners } from "@/lib/canvas";
 import { connection } from "@/lib/solana/verify";
 import { treasuryKeypair } from "@/lib/solana/payout";
+import { tokenProgramId } from "@/lib/solana/program";
 import { BASE_PRICE, FREE_COOLDOWN_S, FREE_MODE, LAUNCHED, ROUND_HOURS, SPLIT, TOKEN } from "@/lib/config";
 import { handle, json } from "@/lib/api";
 
@@ -15,12 +16,13 @@ async function onchain() {
   try {
     const conn = connection();
     const owner = new PublicKey(TOKEN.treasury);
-    const [lamports, tok] = await Promise.all([
+    const [lamports, tok, program] = await Promise.all([
       conn.getBalance(owner),
       conn.getParsedTokenAccountsByOwner(owner, { mint: new PublicKey(TOKEN.mint) }),
+      tokenProgramId(conn),
     ]);
     const wtc = tok.value.reduce((s, a) => s + Number(a.account.data.parsed.info.tokenAmount.uiAmount ?? 0), 0);
-    return { sol: lamports / 1e9, wtc, ata: getAssociatedTokenAddressSync(new PublicKey(TOKEN.mint), owner, true).toBase58(), error: null };
+    return { sol: lamports / 1e9, wtc, ata: getAssociatedTokenAddressSync(new PublicKey(TOKEN.mint), owner, true, program).toBase58(), error: null };
   } catch (e) { return { sol: null, wtc: null, error: (e as Error).message }; }
 }
 

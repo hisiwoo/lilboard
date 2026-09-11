@@ -2,6 +2,7 @@ import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { getOrCreateAssociatedTokenAccount, transfer } from "@solana/spl-token";
 import { TOKEN, toBaseUnits } from "../config";
 import { connection } from "./verify";
+import { tokenProgramId } from "./program";
 
 /** Treasury hot wallet — only needed for claims/burns. Keep small balances here; sweep the rest cold. */
 export function treasuryKeypair(): Keypair | null {
@@ -16,7 +17,8 @@ export async function sendTokens(to: string, tokens: number): Promise<string> {
   if (!kp) throw new Error("payouts not configured");
   const conn: Connection = connection();
   const mint = new PublicKey(TOKEN.mint);
-  const from = await getOrCreateAssociatedTokenAccount(conn, kp, mint, kp.publicKey);
-  const dest = await getOrCreateAssociatedTokenAccount(conn, kp, mint, new PublicKey(to));
-  return transfer(conn, kp, from.address, dest.address, kp, toBaseUnits(tokens));
+  const program = await tokenProgramId(conn);
+  const from = await getOrCreateAssociatedTokenAccount(conn, kp, mint, kp.publicKey, false, undefined, undefined, program);
+  const dest = await getOrCreateAssociatedTokenAccount(conn, kp, mint, new PublicKey(to), true, undefined, undefined, program);
+  return transfer(conn, kp, from.address, dest.address, kp, toBaseUnits(tokens), [], undefined, program);
 }

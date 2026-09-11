@@ -1,6 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { TOKEN } from "../config";
+import { tokenProgramId } from "./program";
 
 let conn: Connection | null = null;
 export function connection() {
@@ -23,7 +24,7 @@ export async function verifyPayment(signature: string, payer: string, amount: bi
   const signer = keys.find((k) => k.signer && k.pubkey.toBase58() === payer);
   if (!signer) throw new Error("payer did not sign this transaction");
 
-  const treasuryAta = getAssociatedTokenAddressSync(new PublicKey(TOKEN.mint), new PublicKey(TOKEN.treasury), true).toBase58();
+  const treasuryAta = getAssociatedTokenAddressSync(new PublicKey(TOKEN.mint), new PublicKey(TOKEN.treasury), true, await tokenProgramId(connection())).toBase58();
   const ataIndex = keys.findIndex((k) => k.pubkey.toBase58() === treasuryAta);
   if (ataIndex === -1) throw new Error("treasury not credited");
   const bal = (list: NonNullable<typeof tx.meta>["preTokenBalances"]) => BigInt(list?.find((b) => b.accountIndex === ataIndex && b.mint === TOKEN.mint)?.uiTokenAmount.amount ?? "0");

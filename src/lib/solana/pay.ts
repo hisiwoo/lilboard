@@ -2,6 +2,7 @@
 import { Connection, PublicKey, Transaction } from "@solana/web3.js";
 import { createAssociatedTokenAccountIdempotentInstruction, createTransferInstruction, getAssociatedTokenAddressSync } from "@solana/spl-token";
 import { TOKEN } from "../config";
+import { tokenProgramId } from "./program";
 
 /** All of `owner`'s token accounts for the pixel token, largest first. */
 export async function tokenAccounts(connection: Connection, owner: PublicKey) {
@@ -21,11 +22,12 @@ export async function buildPaymentTx(connection: Connection, payer: PublicKey, a
   if (payer.equals(treasury)) throw new Error("This is the fee wallet — it can't pay itself. Use another wallet.");
   const [src] = await tokenAccounts(connection, payer);
   if (!src || src.amount < amount) throw new Error(`Not enough ${TOKEN.symbol} in this wallet`);
-  const to = getAssociatedTokenAddressSync(mint, treasury, true);
+  const program = await tokenProgramId(connection);
+  const to = getAssociatedTokenAddressSync(mint, treasury, true, program);
 
   const tx = new Transaction();
-  tx.add(createAssociatedTokenAccountIdempotentInstruction(payer, to, treasury, mint));
-  tx.add(createTransferInstruction(src.address, to, payer, amount));
+  tx.add(createAssociatedTokenAccountIdempotentInstruction(payer, to, treasury, mint, program));
+  tx.add(createTransferInstruction(src.address, to, payer, amount, [], program));
   const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
   tx.recentBlockhash = blockhash;
   tx.feePayer = payer;
