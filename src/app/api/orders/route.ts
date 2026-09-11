@@ -4,11 +4,12 @@ import { requireWallet } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { commitPaint, priceItems, validateItems } from "@/lib/paint";
 import { FREE_MODE, TOKEN, toBaseUnits } from "@/lib/config";
-import { handle, json } from "@/lib/api";
+import { handle, json, requireLaunched } from "@/lib/api";
 
 /** Quote only: POST /api/orders?quote=1 */
 export async function POST(req: Request) {
   return handle(async () => {
+    requireLaunched();
     const wallet = await requireWallet();
     const items = validateItems((await req.json()).items);
     const priced = await priceItems(items, wallet);

@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/admin";
 import { ensureHydrated, claimedCount, topOwners } from "@/lib/canvas";
 import { connection } from "@/lib/solana/verify";
 import { treasuryKeypair } from "@/lib/solana/payout";
-import { BASE_PRICE, FREE_COOLDOWN_S, FREE_MODE, ROUND_HOURS, SPLIT, TOKEN } from "@/lib/config";
+import { BASE_PRICE, FREE_COOLDOWN_S, FREE_MODE, LAUNCHED, ROUND_HOURS, SPLIT, TOKEN } from "@/lib/config";
 import { handle, json } from "@/lib/api";
 
 export const dynamic = "force-dynamic";
@@ -46,7 +46,7 @@ export async function GET() {
     const owed = liabilities.claimable + liabilities.burnPending + liabilities.pot;
     const withdrawable = chain.wtc == null ? null : Math.max(0, Math.floor(chain.wtc - owed));
     return json({
-      config: { freeMode: FREE_MODE, basePrice: BASE_PRICE, freeCooldown: FREE_COOLDOWN_S, roundHours: ROUND_HOURS, split: SPLIT, mint: TOKEN.mint, symbol: TOKEN.symbol, treasury: TOKEN.treasury, cluster: TOKEN.cluster, payoutsConfigured: !!treasuryKeypair() },
+      config: { launched: LAUNCHED, freeMode: FREE_MODE, basePrice: BASE_PRICE, freeCooldown: FREE_COOLDOWN_S, roundHours: ROUND_HOURS, split: SPLIT, mint: TOKEN.mint, symbol: TOKEN.symbol, treasury: TOKEN.treasury, cluster: TOKEN.cluster, payoutsConfigured: !!treasuryKeypair() },
       chain, liabilities, owed, withdrawable,
       revenue: { ops: stats?.ops ?? 0, burned: stats?.burned ?? 0, volume: volume._sum.total ?? 0, paybackPaid: payback._sum.amount ?? 0, jackpotPaid: jackpotPaid._sum.amount ?? 0 },
       activity: { users, ordersPaid, pixelsClaimed: claimedCount(), topOwners: topOwners(5) },

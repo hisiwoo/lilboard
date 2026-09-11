@@ -9,7 +9,8 @@
     "lint": "next lint",
     "postinstall": "prisma generate",
     "db:push": "prisma db push",
-    "dev:mint": "tsx scripts/create-dev-mint.ts"
+    "dev:mint": "tsx scripts/create-dev-mint.ts",
+    "launch": "tsx scripts/launch.ts"
   },
   "dependencies": {
     "@libsql/client": "^0.15.9",

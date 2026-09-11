@@ -4,11 +4,12 @@ import { requireWallet } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { FREE_MODE } from "@/lib/config";
 import { sendTokens } from "@/lib/solana/payout";
-import { handle, json } from "@/lib/api";
+import { handle, json, requireLaunched } from "@/lib/api";
 
 /** Pay out the caller's claimable balance from the treasury hot wallet. */
 export async function POST() {
   return handle(async () => {
+    requireLaunched();
     const wallet = await requireWallet();
     const user = await prisma.user.findUnique({ where: { wallet } });
     if (!user || user.claimable <= 0) throw new Error("nothing to claim");

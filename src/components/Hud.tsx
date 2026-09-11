@@ -141,6 +141,23 @@ export function PixelInfo({ info, me, symbol }: { info: { x: number; y: number; 
   );
 }
 
+/* ---------- Locked: shown until the pump.fun CA is configured ---------- */
+export function Locked({ meta }: { meta: Meta }) {
+  const sym = meta.token.symbol;
+  return (
+    <div className="flex min-h-dvh flex-col items-center justify-center gap-6 p-6 text-center">
+      <div className="text-5xl font-black tracking-tight sm:text-7xl">lil<span style={{ color: "var(--accent)" }}>board</span></div>
+      <div className="text-lg font-semibold text-white/80 sm:text-2xl">Grab land. Draw. Defend.</div>
+      <div className="panel px-5 py-4 text-sm text-white/70">
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-white/50">launching on pump.fun</div>
+        <div className="mt-1 text-xl font-black" style={{ color: "var(--accent)" }}>${sym}</div>
+        <div className="mt-2">One giant canvas. Every pixel bought with ${sym}.<br />Steal anyone&apos;s pixel for 2× · get stolen, get paid back +20% · every steal burns supply.</div>
+      </div>
+      <div className="text-xs text-white/40">CA drops soon — the board unlocks the moment it does.</div>
+    </div>
+  );
+}
+
 /* ---------- Rules / how it works ---------- */
 export function Rules({ meta, onClose }: { meta: Meta; onClose: () => void }) {
   const sym = meta.token.symbol, s = meta.split;

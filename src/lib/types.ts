@@ -1,7 +1,7 @@
 export type RoundInfo = { id: number; endsAt: string; pot: number; leader: { wallet: string; pixels: number } | null; second: number };
 export type Meta = {
   w: number; h: number; palette: string[]; basePrice: number; maxMult: number; maxPerOrder: number;
-  freeMode: boolean; freeCooldown: number; roundHours: number;
+  launched: boolean; freeMode: boolean; freeCooldown: number; roundHours: number;
   split: { steal: { owner: number; burn: number; jackpot: number; ops: number }; blank: { jackpot: number; burn: number; ops: number } };
   claimed: number; burned: number; round: RoundInfo;
   token: { symbol: string; mint: string; decimals: number; treasury: string; cluster: string };

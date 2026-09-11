@@ -2,11 +2,12 @@ import { requireWallet } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { commitPaint, priceItems, validateItems } from "@/lib/paint";
 import { FREE_COOLDOWN_S } from "@/lib/config";
-import { handle, json } from "@/lib/api";
+import { handle, json, requireLaunched } from "@/lib/api";
 
 /** One free pixel per cooldown. Free pixels can only go on blank pixels or your own — you have to pay to fight. */
 export async function POST(req: Request) {
   return handle(async () => {
+    requireLaunched();
     const wallet = await requireWallet();
     const user = await prisma.user.findUnique({ where: { wallet } });
     if (!user) throw new Error("not signed in");

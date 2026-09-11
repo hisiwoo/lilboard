@@ -3,7 +3,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { Board } from "./Board";
-import { BottomBar, Leaderboard, PixelInfo, Rules, Ticker, Toast, TopBar } from "./Hud";
+import { BottomBar, Leaderboard, Locked, PixelInfo, Rules, Ticker, Toast, TopBar } from "./Hud";
 import { useSession } from "@/hooks/useSession";
 import { useTokenBalance } from "@/hooks/useTokenBalance";
 import { buildPaymentTx, waitForConfirmation } from "@/lib/solana/pay";
@@ -200,6 +200,8 @@ export function Game() {
   }
 
   const hint = !me ? (wallet ? "Sign the message to start painting" : "Connect a wallet to start") : null;
+
+  if (!meta.launched) return <Locked meta={meta} />;
 
   return (
     <div className="relative h-dvh w-full overflow-hidden">

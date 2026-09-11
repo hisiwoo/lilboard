@@ -3,7 +3,7 @@
 <defs><linearGradient id="h" x1="0" x2="1"><stop offset="0" stop-color="#0b0b0f" stop-opacity="0.95"/><stop offset="0.65" stop-color="#0b0b0f" stop-opacity="0.5"/><stop offset="1" stop-color="#0b0b0f" stop-opacity="0.1"/></linearGradient></defs>
 <rect width="1500" height="500" fill="url(#h)"/>
 <text x="90" y="215" font-family="Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="150" fill="#ffffff" letter-spacing="-6">lil<tspan fill="#c8ff00">board</tspan></text>
-<text x="94" y="285" font-family="Helvetica Neue, Arial, sans-serif" font-weight="800" font-size="34" fill="#ffffff" letter-spacing="6">ONCHAIN PIXEL WAR · PAID IN $WTC</text>
+<text x="94" y="285" font-family="Helvetica Neue, Arial, sans-serif" font-weight="800" font-size="34" fill="#ffffff" letter-spacing="6">ONCHAIN PIXEL WAR · PAID IN $LILBOARD</text>
 <text x="94" y="330" font-family="Helvetica Neue, Arial, sans-serif" font-weight="600" font-size="27" fill="#9a9aa5">Buy land. Steal land. Get paid when yours is stolen.</text><text x="94" y="365" font-family="Helvetica Neue, Arial, sans-serif" font-weight="600" font-size="27" fill="#9a9aa5">Biggest landowner wins the jackpot every 24h.</text>
 <rect x="94" y="395" width="300" height="60" rx="30" fill="#c8ff00"/>
 <text x="244" y="436" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-weight="900" font-size="32" fill="#0b0b0f">lilboard.com</text>

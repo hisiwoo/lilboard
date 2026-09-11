@@ -14,7 +14,7 @@ export const BLANK = 255;
 
 export const TOKEN = {
   mint: process.env.NEXT_PUBLIC_PIXEL_MINT || "",
-  symbol: process.env.NEXT_PUBLIC_PIXEL_SYMBOL || "LIL",
+  symbol: process.env.NEXT_PUBLIC_PIXEL_SYMBOL || "LILBOARD",
   decimals: Number(process.env.NEXT_PUBLIC_PIXEL_DECIMALS || 6),
   treasury: process.env.NEXT_PUBLIC_TREASURY_WALLET || "",
   rpc: process.env.NEXT_PUBLIC_SOLANA_RPC_URL || "https://api.devnet.solana.com",
@@ -25,8 +25,14 @@ export const BASE_PRICE = Number(process.env.NEXT_PUBLIC_BASE_PIXEL_PRICE || 100
 export const FREE_COOLDOWN_S = Number(process.env.FREE_PIXEL_COOLDOWN || 30);
 export const ROUND_HOURS = Number(process.env.ROUND_HOURS || 24);
 
-/** Free mode = no mint/treasury configured → painting costs nothing (dev / pre-launch). */
-export const FREE_MODE = !TOKEN.mint || !TOKEN.treasury;
+/** Free mode = explicit dev opt-in (NEXT_PUBLIC_FREE_MODE=1) → painting costs nothing. Never turns on by accident. */
+export const FREE_MODE = process.env.NEXT_PUBLIC_FREE_MODE === "1";
+/**
+ * Launched = the pump.fun CA (NEXT_PUBLIC_PIXEL_MINT) and treasury wallet are set, or free mode is on.
+ * Until then the game is locked: the canvas shows a "launching soon" screen and every write API returns 503.
+ * `npm run launch -- <CA>` sets the mint on Vercel and redeploys.
+ */
+export const LAUNCHED = FREE_MODE || (!!TOKEN.mint && !!TOKEN.treasury);
 
 /**
  * Where each token goes, in percent.

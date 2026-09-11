@@ -3,10 +3,11 @@ import { prisma } from "@/lib/prisma";
 import { commitPaint, type PricedItem } from "@/lib/paint";
 import { verifyPayment } from "@/lib/solana/verify";
 import { toBaseUnits } from "@/lib/config";
-import { handle, json } from "@/lib/api";
+import { handle, json, requireLaunched } from "@/lib/api";
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   return handle(async () => {
+    requireLaunched();
     const wallet = await requireWallet();
     const { id } = await params;
     const { signature } = await req.json();

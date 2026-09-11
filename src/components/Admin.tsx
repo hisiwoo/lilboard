@@ -5,7 +5,7 @@ import { useSession } from "@/hooks/useSession";
 import { fmt, short } from "@/lib/types";
 
 type Summary = {
-  config: { freeMode: boolean; basePrice: number; freeCooldown: number; roundHours: number; split: { steal: Record<string, number>; blank: Record<string, number> }; mint: string; symbol: string; treasury: string; cluster: string; payoutsConfigured: boolean };
+  config: { launched: boolean; freeMode: boolean; basePrice: number; freeCooldown: number; roundHours: number; split: { steal: Record<string, number>; blank: Record<string, number> }; mint: string; symbol: string; treasury: string; cluster: string; payoutsConfigured: boolean };
   chain: { sol: number | null; wtc: number | null; ata?: string; error: string | null };
   liabilities: { claimable: number; burnPending: number; pot: number }; owed: number; withdrawable: number | null;
   revenue: { ops: number; burned: number; volume: number; paybackPaid: number; jackpotPaid: number };
@@ -111,7 +111,7 @@ export function Admin() {
           </Card>
 
           <Card title="Config">
-            <Row k="Mode" v={data.config.freeMode ? "FREE" : "PAID"} warn={data.config.freeMode} />
+            <Row k="Mode" v={!data.config.launched ? "LOCKED — waiting for CA" : data.config.freeMode ? "FREE" : "PAID"} warn={!data.config.launched || data.config.freeMode} />
             <Row k="Cluster" v={data.config.cluster} />
             <Row k="Mint" v={short(data.config.mint)} />
             <Row k="Base price" v={`${fmt(data.config.basePrice)} ${data.config.symbol}`} />
